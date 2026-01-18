@@ -13,7 +13,7 @@
     이메일 : <input type="text" id="email" name="email">
     <div id="grades">
         <p>성적정보</p>
-        <div class="grade">
+        <div class="grade">     <!--subject, point 가 여러개이므로 id로 안주고 class로 줌-->
             수업명 : <input type="text" class="subjects" name="subject"> <br>
             점수 : <input type="text" class="points" name="point">
         </div>
@@ -34,7 +34,7 @@
         for(let i=0; i<grades.length; i++){
             const subject = document.getElementsByClassName('subjects')[i].value;
             const point = document.getElementsByClassName('points')[i].value;
-            const grade = {subject, point};     // grade 객체로 만들어서 scores에 push
+            const grade = {subject, point};     // "grade 객체로 만들어서" scores에 push
             scores.push(grade);     // [ {s, p}, {s, p}, ... ]
         }
         const serverData = {name, email, scores};   //{name:name, email:email, scores:[{}, {}];

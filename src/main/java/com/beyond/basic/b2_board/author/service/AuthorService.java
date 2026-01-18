@@ -35,6 +35,7 @@ public class AuthorService {
     }
 
     public AuthorDetailDto findById(Long id){
+        AuthorRepository authorRepository = new AuthorRepository();
         Optional<Author> optAuthor = authorRepository.findById(id);
         Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
         //        dto 조립

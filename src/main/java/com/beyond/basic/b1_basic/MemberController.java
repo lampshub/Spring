@@ -177,7 +177,7 @@ public class MemberController {
 //    결론은 multipart-formdata구조안에 json을 넣는 방식
     @PostMapping("/json-file")
     @ResponseBody
-//    json과 file을 함께 처리해야할떄는 일반적으로 RequestPart 사용
+//    json과 file을 함께 처리해야할때는 일반적으로 RequestPart 사용
     public String jsonFile(@RequestPart("member") Member member, @RequestPart("profileImage") MultipartFile profileImage){
         System.out.println(member);
         System.out.println(profileImage.getOriginalFilename());

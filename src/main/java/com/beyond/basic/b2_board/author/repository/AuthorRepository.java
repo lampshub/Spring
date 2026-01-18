@@ -11,6 +11,7 @@ public class AuthorRepository {
     private static Long staticId = 1L;
 
     public void save(Author author){
+//        DB에 전달 insert into author(name, email, password) values(author.getName(), author.getEmail(), author.getPassword())
         this.authorList.add(author);
         author.setId(staticId++);
     }

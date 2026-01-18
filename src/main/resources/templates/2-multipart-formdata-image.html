@@ -9,7 +9,7 @@
     <form>
         이름 : <input type="text" id="name">
         이메일 : <input type="text" id="email">
-        프로필이미지 : <input type="file" id="fileList">
+        프로필이미지 : <input type="file" id="fileList">  <!--file로 가져오는건 Multiple로 설계가 되어있어 배열로 가져옴-->
         <button type="button" onclick="postData()">제출</button>
     </form>
     <script>
@@ -17,7 +17,7 @@
             const name = document.getElementById("name").value;
             const email = document.getElementById("email").value;
             const fileList = document.getElementById("fileList");
-            const file = fileList.files[0];
+            const file = fileList.files[0];     <!--type="file"에서 파일(이미지)을 여러개 가져오는 배열로 설계됨-->
             const serverData = new FormData();  <!-- FormData() 사용을 잘 알아두기! -->
             serverData.append('name', name);
             serverData.append('email', email);

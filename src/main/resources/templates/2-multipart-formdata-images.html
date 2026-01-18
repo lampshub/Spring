@@ -21,7 +21,7 @@
         serverData.append('name', name);
         serverData.append('email', email);
         for(let i=0; i<fileList.files.length; i++){
-            serverData.append('profileImages', fileList.files[i]);
+            serverData.append('profileImages', fileList.files[i]);  <!--RequestParam의 value값이랑 맞아야함-->
         }
         await axios.post("http://localhost:8081/member/multipart-formdata-images", serverData);
     }

@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/post-view")
-public class ViewController {
+public class  ViewController {
     @GetMapping("/url-encoded")
     public String urlEncoded(){
-        return "1-url_encoded";
+        return "1-url-encoded";
     }
     @GetMapping("/multipart-formdata-image")
     public String multiPartFormDataImage(){
