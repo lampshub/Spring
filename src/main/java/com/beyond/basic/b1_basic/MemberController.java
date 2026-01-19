@@ -110,7 +110,6 @@ public class MemberController {
 
 //    post요청의 처리 case : urlencoded, multipart-formdata, json
 //    case1. body의 content-type이 urlencoded형식
-
 //    형식 : body부에 name=honggildong&email=hong@naver.com
     @PostMapping("/url-encoded")
     @ResponseBody

@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //부트스트랩 코드 (실행코드) -> 프로젝트를 켜는 목적만 있음
+//ComponentScan에 의해 Application파일 하위 경로의 요소들이 싱글톤객체로 스캔
 @SpringBootApplication
 public class BasicApplication {
 
