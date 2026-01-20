@@ -6,52 +6,93 @@ import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
 import com.beyond.basic.b2_board.author.service.AuthorService;
+import com.beyond.basic.b2_board.common.CommonErrorDto;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
-//      생성자주입방식으로 생성자AutoController에 authorService 주입
+    //      생성자주입방식으로 생성자AutoController에 authorService 주입
     private final AuthorService authorService;
+
     @Autowired
-    public AuthorController(AuthorService authorService){
-        this.authorService=authorService;
+    public AuthorController(AuthorService authorService) {
+        this.authorService = authorService;
     }
 //    public AuthorController(){      //생성자
 //        this.authorService = new AuthorService();
 //    }
 
-//    컨트롤러에서 서비스로 dto 전달
+    //    컨트롤러에서 서비스로 dto 전달
     @PostMapping("/create")
-    public String create(@RequestBody AuthorCreateDto dto){     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
+//    dto에 있는 validation어노테이션(@NotBlank)과 @Valid가 한쌍
+    public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto) {     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
+//        아래 예외처리는 ExceptionHandler에서 전역적으로 예외처리
+//        try {
+//            authorService.save(dto);
+//            return ResponseEntity.status(HttpStatus.CREATED).body("ok");
+//        } catch (IllegalArgumentException e){
+//            e.printStackTrace();
+//            CommonErrorDto commondErrorDto = CommonErrorDto.builder().status_code(400).error_message(e.getMessage()).build();
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commondErrorDto);
+//        }
         authorService.save(dto);
-        return "done";
+        return ResponseEntity.status(HttpStatus.CREATED).body("ok");
     }
 
     //    수업영상 260116 오후 3:11:45
     @GetMapping("/list")
-    public List<AuthorListDto> findAll(){
-//        List<AuthorListDto> dtoList = authorService.findAll();
-        AuthorService authorService = new AuthorService();
+    public List<AuthorListDto> findAll() {
         List<AuthorListDto> dtoList = authorService.findAll();
         return dtoList;
 
     }
 
-//    수업영상 260116 오후 2:40:00
-    @GetMapping("/{id}")
-    public AuthorDetailDto findById(@PathVariable Long id){
-//        서비스에 id값 조회 호출
-        AuthorDetailDto dto = authorService.findById(id);
-        return dto;
-    }
+//    //    수업영상 260116 오후 2:40:00
+//    아래와 같이 http응답 body를 분기처리한다 하더라도 상태코드는 200으로 고정(->문제점)
+//    @GetMapping("/{id}")
+//    public Object findById(@PathVariable Long id) {     //Object는 모든 클래스의 조상
+////        서비스에 id값 조회 호출
+//        try {
+//            AuthorDetailDto dto = authorService.findById(id);
+//            return dto;
+//        } catch (NoSuchElementException e) {
+//            e.printStackTrace();    // 개발자가 보려고 남기는 로그
+//            return CommonErrorDto.builder()
+//                    .status_code(404)
+//                    .error_message(e.getMessage())
+//                    .build();
+//        }
 
+        @GetMapping("/{id}")
+        public ResponseEntity<?> findById(@PathVariable Long id) {
+            try {
+                AuthorDetailDto dto = authorService.findById(id);
+                return ResponseEntity.status(HttpStatus.OK).body(dto);
+            } catch (NoSuchElementException e) {
+                e.printStackTrace();
+                CommonErrorDto dto = CommonErrorDto.builder()
+                    .status_code(404)
+                    .error_message(e.getMessage())
+                    .build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dto);
+            }
+
+        }
+
+
+    //    수업 26.01.20 오전 9:23
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id){
-        System.out.println(id);
+    public String delete(@PathVariable Long id) {
+        authorService.delete(id);
         return "OK";
     }
 }

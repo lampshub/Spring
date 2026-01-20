@@ -49,7 +49,7 @@ public class AuthorJdbcRepository {
             String sql = "select * from author where id = ?";
             PreparedStatement ps = connection.prepareStatement(sql);
             ps.setLong(1, inputId);
-            ResultSet rs =ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
             if (rs.next()){     //2줄이상이면 while문으로 반복
                 Long id = rs.getLong("id"); //db의 컬럼명 "id"
                 String name = rs.getString("name");
@@ -62,6 +62,30 @@ public class AuthorJdbcRepository {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return Optional.ofNullable(author);
+    }
+
+    public Optional<Author> findByEmail(String inputEmail){  //author가 있을수도 있고 없을수도 있어서 Optional로 설정
+        Author author = null;
+        try {
+            Connection connection = dataSource.getConnection();
+            String sql = "select * from author where email = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, inputEmail);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()){     //2줄이상이면 while문으로 반복
+                Long id = rs.getLong("id"); //db의 컬럼명 "id"
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                String password = rs.getString("password");
+                author = Author.builder()
+                        .id(id).name(name).email(email).password(password)
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         return Optional.ofNullable(author);
     }
 
@@ -87,6 +111,20 @@ public class AuthorJdbcRepository {
             throw new RuntimeException(e);
         }
         return authorList;
+    }
+
+    public void delete(Long id){
+        try {
+            Connection connection = dataSource.getConnection();
+            String sql = "delete from author where id = ?";
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setLong(1, id);
+//            executeUpdate() : 추가/수정/삭제, executeQurey : 조회
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

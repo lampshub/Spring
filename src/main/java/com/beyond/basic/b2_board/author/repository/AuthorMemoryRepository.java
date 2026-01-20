@@ -31,5 +31,4 @@ public class AuthorMemoryRepository {
         }
         return Optional.ofNullable(author);
     }
-
 }

@@ -1,11 +1,13 @@
 package com.beyond.basic.b2_board.author.service;
 
 
+import com.beyond.basic.b2_board.author.controller.AuthorController;
 import com.beyond.basic.b2_board.author.domain.Author;
 import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
 import com.beyond.basic.b2_board.author.repository.AuthorJdbcRepository;
+import com.beyond.basic.b2_board.author.repository.AuthorMybatisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +36,10 @@ public class AuthorService {
 //    장점1) final을 통해 상수로 사용 가능 (안정성 향상)
 //    장점2) 다형성 구현 가능 (interface 사용가능)
 //    장점3) 순환참조 방지 (컴파일타임에 에러check)
-    private final AuthorJdbcRepository authorRepository;
+    private final AuthorMybatisRepository authorRepository;
 //    생성자가 하나밖에 없을때에는 AutoWired생략가능
     @Autowired
-    public AuthorService(AuthorJdbcRepository authorRepository){
+    public AuthorService(AuthorMybatisRepository authorRepository){
         this.authorRepository=authorRepository;
     }
 
@@ -61,6 +63,11 @@ public class AuthorService {
 
 //        방법2. toEntity, FromEntity 패턴을 통한 객체 조립
 //        객체조립이라는 반복적인 작업을 별도의 코드로 떼어내 공통화
+//        email 중복여부 검증
+        if(authorRepository.findByEmail(dto.getEmail()).isPresent()){
+            throw new IllegalArgumentException("이미 존재하는 Email입니다.")  ;
+        }       //에러터지면 코드 여기서 스탑
+
         Author author = dto.toEntity();
         authorRepository.save(author);
     }
@@ -81,8 +88,9 @@ public class AuthorService {
 //        fromEntity는 아직 dto객체가 만들어지지 않은 상태이므로 static메서드로 설계
         AuthorDetailDto dto = AuthorDetailDto.fromEntity(author);
         return dto;
-
     }
+
+
 
     public List<AuthorListDto> findAll(){
 //        List<Author> authorList = authorRepository.findAll(); //authorRepository는 초기값이 세팅되어있음. list는 초기값이 세팅 되어있어서 Optional설정 안함
@@ -94,5 +102,12 @@ public class AuthorService {
 //        return authorListDtos;
         List<AuthorListDto> authorListDtos = authorRepository.findAll().stream().map(a->AuthorListDto.fromEntity(a)).collect(Collectors.toList());
         return authorListDtos;
+    }
+
+    public void delete(Long id){
+//        데이터 조회 후 없다면 예외처리
+        Author author = authorRepository.findById(id).orElseThrow(()-> new NoSuchElementException( "조회하신 아이디가 없습니다."));
+//        있으면 삭제작업
+        authorRepository.delete(id);
     }
 }
