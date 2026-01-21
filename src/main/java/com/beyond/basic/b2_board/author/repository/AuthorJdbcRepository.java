@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+// 수업 260117 오후 32:53
+
 @Repository
 public class AuthorJdbcRepository {
 //  Datasource는 jdbc의 DB 관리 객체

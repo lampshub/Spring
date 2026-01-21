@@ -8,13 +8,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-//ResponseEntity : http응답객체의 body뿐 아니라, 상태코드 및 헤더요소를 바꿔야하는 경우에 사용
+//수업영상 260118 오전 1:40:00
+
+//ResponseEntity : http응답객체의 body뿐 아니라, 상태코드(startLine) 및 헤더요소를 바꿔야하는 경우에 사용
 @RestController
 @RequestMapping("/response_entity")
 public class ResponseEntityController {
 
 //    @ResponseStatus 어노테이션 사용 : 상황에 따른 분기처리의 어려움
-    @ResponseStatus(HttpStatus.CREATED) //start부분에 201
+    @ResponseStatus(HttpStatus.CREATED) //Ok : 200, CREATED : 201(등록성공), BAD_REQUEST  요청 문법 잘못됐을때 : 400, NOTFOUND : 404
     @GetMapping("/annotation")
     public String annotation(){
         return "ok";

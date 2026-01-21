@@ -1,15 +1,14 @@
 package com.beyond.basic.b2_board.author.controller;
 // controller, repository, service 안보고 다 코드 칠수있을때까지
 
-import com.beyond.basic.b2_board.author.domain.Author;
 import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
 import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
+import com.beyond.basic.b2_board.author.dtos.AuthorUpdatePwDto;
 import com.beyond.basic.b2_board.author.service.AuthorService;
 import com.beyond.basic.b2_board.common.CommonErrorDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -94,5 +93,11 @@ public class AuthorController {
     public String delete(@PathVariable Long id) {
         authorService.delete(id);
         return "OK";
+    }
+
+//    이메일을 찾아서 비밀번호 수정
+    @PatchMapping("/update/password")
+    public void updatePw(@RequestBody AuthorUpdatePwDto dto){
+        authorService.updatePw(dto);
     }
 }

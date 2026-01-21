@@ -22,9 +22,7 @@ public class AuthorListDto {
                 .id(author.getId())
                 .name(author.getName())
                 .email(author.getEmail())
-
                 .build();
-
     }
 }
 
