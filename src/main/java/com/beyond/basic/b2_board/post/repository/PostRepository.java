@@ -14,6 +14,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //    private List<Post> postList;
 //    private static Long staticId =1L;
 
-    Optional<Post> findByEmail(String email);
+    List<Post> findAllByDelYn(String delYn);
+//    Optional<Post> findByEmail(String email);
+
+
+//    List<Post> findAllByAuthorIdAndDelYn(Long authorId, String delYn);
 
 }

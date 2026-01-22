@@ -17,8 +17,8 @@ spring:
 #     innoDB 를 쓰겠다는 설정 (innoDB : DB엔진 종류로 대부분 이렇게 쓰임)
     database-platform: org.hibernate.dialect.MariaDBDialect
 #     ddl : create alter drop => 테이블(&컬럼)의 구조를 자동생성 여부 : true
-    ganeragte-ddl: true
-#     jpa(인터페이스 명세)의 실질적인 구현체는 hibernate
+    generate-ddl: true
+#     jpa(인터페이스 명세)의 실질적인 구현체는 hibernate패키지 내에 있음
     hibernate:
 #    ddl문 자동생성에 대한 모드(create, update, validate) 설정
 #    create: 매번(서버재시작마다) table을 전체 drop후 재생성 - 프로젝트최초구성시
