@@ -23,12 +23,20 @@ public class AuthorCreateDto {
     @Size(min = 8, message = "패스워드의 길이가 너무 짧습니다.")
     private String password;
 
-    //객체조립 방법2
-    public Author toEntity() {  //dto->entity
+//    //객체조립 방법2
+//    public Author toEntity() {  //dto->entity
+//        return Author.builder()
+//                .name(this.name)
+//                .email(this.email)
+//                .password(this.password)
+//                .build();
+//    }
+
+    public Author toEntity(String encodedPassword) { 
         return Author.builder()
                 .name(this.name)
                 .email(this.email)
-                .password(this.password)
+                .password(encodedPassword)
                 .build();
     }
     }

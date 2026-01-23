@@ -3,15 +3,13 @@ package com.beyond.basic.b2_board.author.service;
 
 import com.beyond.basic.b2_board.author.controller.AuthorController;
 import com.beyond.basic.b2_board.author.domain.Author;
-import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorUpdatePwDto;
+import com.beyond.basic.b2_board.author.dtos.*;
 import com.beyond.basic.b2_board.author.repository.*;
 import com.beyond.basic.b2_board.post.domain.Post;
 import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,11 +44,13 @@ public class AuthorService {
 //    장점3) 순환참조 방지 (컴파일타임에 에러check)
     private final AuthorRepository authorRepository;
     private final PostRepository postRepository;
+    private final PasswordEncoder passwordEncoder;
 //    생성자가 하나밖에 없을때에는 AutoWired생략가능
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, PostRepository postRepository){
+    public AuthorService(AuthorRepository authorRepository, PostRepository postRepository, PasswordEncoder passwordEncoder){
         this.authorRepository=authorRepository;
         this.postRepository = postRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 ////    의존성주입방법3. RequiredArgsConstructor어노테이션 사용
@@ -78,12 +78,19 @@ public class AuthorService {
             throw new IllegalArgumentException("이미 존재하는 Email입니다.");
         }       //에러터지면 코드 여기서 스탑 -> CommonExceptionHandler로
 
-        Author author = dto.toEntity();
+//        passwordEncoder.matches(dto.getPassword().db의 패스워드);
+
+//        Author author = dto.toEntity();
+        Author author = dto.toEntity(passwordEncoder.encode(dto.getPassword()));     //여기서 author를 만들때 암호화된 값으로 바꿈
         Author authorDb = authorRepository.save(author);    //id 값이 여기 save()로 DB에 저장된 후에 생김
 //        cascade persist 를 활용한 예시
         author.getPostList().add(Post.builder().title("안녕하세요").author(authorDb).build());
 
-////        cascade 옵션이 아닌 예시
+////        아래순서로 바꿔도 가능함
+//        author.getPostList().add(Post.builder().title("안녕하세요").author(author).build());
+//        authorRepository.save(author);
+
+////        cascade 옵션이 아닌 예시 (cascade없이도 저장 가능)
 //        postRepository.save(Post.builder().title("안녕하세요").author(authorDb).build());    //회원가입하면 안녕하세요 글까지 작성.
 
 //        예외 발생시 transactional 어노테이션에 의해 rollback처리 -> 아래 에러로 위에 save도 롤백됨
@@ -93,7 +100,6 @@ public class AuthorService {
 //    트랙잭션 처리가 필요없는 조회만 있는 메서드의 경우, 성능향상을 위해 readOnly처리
     @Transactional(readOnly = true)
     public AuthorDetailDto findById(Long id){
-//        AuthorMemoryRepository authorRepository = new AuthorMemoryRepository();
         Optional<Author> optAuthor = authorRepository.findById(id); // Dto > author
         Author author = optAuthor.orElseThrow(()-> new NoSuchElementException("entity is not found"));
 //        List<Post> postList = postRepository.findAllByAuthorIdAndDelYn(author.getId(),"N");
@@ -137,6 +143,23 @@ public class AuthorService {
 //        있으면 삭제작업l
         authorRepository.delete(author);
 //        authorRepository.deleteById(id);
+    }
+
+    public Author login(AuthorLoginDto dto) {
+        Optional<Author> opt_author = authorRepository.findByEmail(dto.getEmail());   //탈취공격시에 없는이메일이라고 에러를 띄우면 이메일이 잘못됐다고 알려주니. 이메일인지 비밀번혼지 안알려주는게 좋음
+        boolean check = true;
+        if (!opt_author.isPresent()) {
+            check = false;
+        } else {
+            if (!passwordEncoder.matches(dto.getPassword(), opt_author.get().getPassword())) {
+                check = false;
+            }
+        }
+
+        if(!check){
+            throw new IllegalArgumentException("email 또는 비밀번호가 일치하지 않습니다.");
+        }
+        return opt_author.get();
     }
 
     public void updatePw(AuthorUpdatePwDto dto){

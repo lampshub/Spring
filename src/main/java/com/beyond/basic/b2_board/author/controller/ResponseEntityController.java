@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-//수업영상 260118 오전 1:40:00
+//수업영상 260118 오전 1:40:00 -> 26/1/20 ?
 
 //ResponseEntity : http응답객체의 body뿐 아니라, 상태코드(startLine) 및 헤더요소를 바꿔야하는 경우에 사용
 @RestController

@@ -1,14 +1,9 @@
 package com.beyond.basic.b2_board.post.domain;
 
 import com.beyond.basic.b2_board.author.domain.Author;
-import com.beyond.basic.b2_board.common.BaseTimeEntity;
+import com.beyond.basic.b2_board.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.mapping.Constraint;
-
-import java.time.LocalDateTime;
 
 @Getter @ToString
 @NoArgsConstructor

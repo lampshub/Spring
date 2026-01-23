@@ -32,7 +32,6 @@ public class PostController {
     @GetMapping("/post/{id}")
     public PostDetailDto postDetailDto(@PathVariable Long id){
         return postService.fingById(id);
-
     }
 
     @GetMapping("/posts")
@@ -42,13 +41,10 @@ public class PostController {
     public List<PostListDto> findAll() {
         List<PostListDto> dtoList = postService.findAll();
         return dtoList;
-
-
-
-}
+    }
 
     @DeleteMapping("/post/{id}")
     public void postDelete(@PathVariable Long id){
-
     }
+
 }

@@ -1,12 +1,11 @@
 package com.beyond.basic.b2_board.author.controller;
 // controller, repository, service 안보고 다 코드 칠수있을때까지
 
-import com.beyond.basic.b2_board.author.dtos.AuthorCreateDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorDetailDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorListDto;
-import com.beyond.basic.b2_board.author.dtos.AuthorUpdatePwDto;
+import com.beyond.basic.b2_board.author.domain.Author;
+import com.beyond.basic.b2_board.author.dtos.*;
 import com.beyond.basic.b2_board.author.service.AuthorService;
-import com.beyond.basic.b2_board.common.CommonErrorDto;
+import com.beyond.basic.b2_board.common.auth.JwtTokenProvider;
+import com.beyond.basic.b2_board.common.dtos.CommonErrorDto;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,10 +20,12 @@ import java.util.NoSuchElementException;
 public class AuthorController {
     //      생성자주입방식으로 생성자AutoController에 authorService 주입
     private final AuthorService authorService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    public AuthorController(AuthorService authorService) {
+    public AuthorController(AuthorService authorService, JwtTokenProvider jwtTokenProvider) {
         this.authorService = authorService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 //    public AuthorController(){      //생성자
 //        this.authorService = new AuthorService();
@@ -84,7 +85,6 @@ public class AuthorController {
                     .build();
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dto);
             }
-
         }
 
 
@@ -99,5 +99,20 @@ public class AuthorController {
     @PatchMapping("/update/password")
     public void updatePw(@RequestBody AuthorUpdatePwDto dto){
         authorService.updatePw(dto);
+    }
+
+//    @PostMapping("/login")
+//    public String login(@RequestBody AuthorLoginDto dto){
+//        Author author = authorService.login(dto);
+////        토큰생성 및 리턴
+//        String token = jwtTokenProvider.createToken(author);
+//        return token;
+//    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody AuthorLoginDto dto){
+        authorService.login(dto);   //author 에 담을필요없으므로 객체생성X -> 토큰생성시 필요시 객체생서해서 사용
+//        String token
+    return "token";
     }
 }
