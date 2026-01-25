@@ -73,7 +73,7 @@ public class AuthorService {
 
 //        방법2. toEntity, FromEntity 패턴을 통한 객체 조립
 //        객체조립이라는 반복적인 작업을 별도의 코드로 떼어내 공통화
-//        email 중복여부 검증
+//        email 중복여부 검증     // findByEmail() 리턴타입은 Optional. 있으면 Author, 없으면 empty
         if(authorRepository.findByEmail(dto.getEmail()).isPresent()){
             throw new IllegalArgumentException("이미 존재하는 Email입니다.");
         }       //에러터지면 코드 여기서 스탑 -> CommonExceptionHandler로
@@ -83,15 +83,15 @@ public class AuthorService {
 //        Author author = dto.toEntity();
         Author author = dto.toEntity(passwordEncoder.encode(dto.getPassword()));     //여기서 author를 만들때 암호화된 값으로 바꿈
         Author authorDb = authorRepository.save(author);    //id 값이 여기 save()로 DB에 저장된 후에 생김
-//        cascade persist 를 활용한 예시
+//        cascade persist 를 활용한 예시      // .author(authorDb) 여기서 authorDB의 PK(id)값만 FK로 저장됨 ** 이거 확인해보기
         author.getPostList().add(Post.builder().title("안녕하세요").author(authorDb).build());
 
 ////        아래순서로 바꿔도 가능함
 //        author.getPostList().add(Post.builder().title("안녕하세요").author(author).build());
-//        authorRepository.save(author);
+//        authorRepository.save(author);    //여기서 id값 생성됨
 
 ////        cascade 옵션이 아닌 예시 (cascade없이도 저장 가능)
-//        postRepository.save(Post.builder().title("안녕하세요").author(authorDb).build());    //회원가입하면 안녕하세요 글까지 작성.
+//        postRepository.save(Post.builder().title("안녕하세요").author(authorDb).build());    //회원가입하면 안녕하세요 post까지 작성.
 
 //        예외 발생시 transactional 어노테이션에 의해 rollback처리 -> 아래 에러로 위에 save도 롤백됨
 //        authorRepository.findById(10L).orElseThrow(()-> new NoSuchElementException("entity is not found"));
@@ -159,7 +159,7 @@ public class AuthorService {
         if(!check){
             throw new IllegalArgumentException("email 또는 비밀번호가 일치하지 않습니다.");
         }
-        return opt_author.get();
+        return opt_author.get();    //.get() 은 Optional에서 값을 꺼냄. 없으면 예외발생. 여기선 이미 예외처리를 다 해서 값이 있음.
     }
 
     public void updatePw(AuthorUpdatePwDto dto){

@@ -35,14 +35,14 @@ public class AuthorController {
     @PostMapping("/create")
 //    dto에 있는 validation어노테이션(@NotBlank)과 @Valid가 한쌍
     public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto) {     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
-//        아래 예외처리는 ExceptionHandler에서 전역적으로 예외처리
+////        아래 예외처리는 ExceptionHandler에서 전역적으로 예외처리
 //        try {
 //            authorService.save(dto);
 //            return ResponseEntity.status(HttpStatus.CREATED).body("ok");
 //        } catch (IllegalArgumentException e){
 //            e.printStackTrace();
-//            CommonErrorDto commondErrorDto = CommonErrorDto.builder().status_code(400).error_message(e.getMessage()).build();
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commondErrorDto);
+//            CommonErrorDto commonErrorDto = CommonErrorDto.builder().status_code(400).error_message(e.getMessage()).build();
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commonErrorDto);
 //        }
         authorService.save(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body("ok");
@@ -111,7 +111,7 @@ public class AuthorController {
 
     @PostMapping("/login")
     public String login(@RequestBody AuthorLoginDto dto){
-        authorService.login(dto);   //author 에 담을필요없으므로 객체생성X -> 토큰생성시 필요시 객체생서해서 사용
+        authorService.login(dto);   //author 에 담을필요없으므로 객체생성X -> 토큰생성시 필요시 객체생성해서 사용
 //        String token
     return "token";
     }

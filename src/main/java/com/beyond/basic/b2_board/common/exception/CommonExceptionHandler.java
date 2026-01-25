@@ -10,26 +10,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.NoSuchElementException;
 
-//Controller 어노테이션이 붙어있는 모든 클래스의 예외를 아래 클래스에서 안터셉팅(가로채기).
+//Controller 어노테이션이 붙어있는 모든 클래스의 예외를 아래 클래스에서 인터셉팅(가로채기).
 @RestControllerAdvice   //예외를 캐치하는 Controller
-public class CommonExceptionHandler {
+public class CommonExceptionHandler {       //Controller 에서 에러가 이거 사용이 안됌??
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> illiega(IllegalArgumentException e) {
+    public ResponseEntity<?> illegal(IllegalArgumentException e) {
         e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
-                .status_code(400).error_message(e.getMessage()).
+                .status_code(400)
+                .error_message(e.getMessage()).
                 build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
     }
 
-
+//    검증어노테이션(@NotBlank 등)에서 예외가 터지면 .getFieldError().getDefaultMessage() 사용
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> notValidException(MethodArgumentNotValidException e) {
         e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()
                 .status_code(400)
-                .error_message(e.getFieldError().getDefaultMessage()).
-                build();
+                .error_message(e.getFieldError().getDefaultMessage())
+                .build();
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(dto);
     }
 
@@ -43,8 +44,9 @@ public class CommonExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dto);
     }
 
+//    위의 에러들을 제외한 나머지 에러 처리(전역 예외처리의 기본형)
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)   //Http상태코드 500을 의미
     public CommonErrorDto exception(Exception e) {
         e.printStackTrace();
         CommonErrorDto dto = CommonErrorDto.builder()

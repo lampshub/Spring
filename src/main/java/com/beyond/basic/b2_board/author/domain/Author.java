@@ -27,7 +27,7 @@ public class Author extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    Long -> bigint, String -> varchar
     private Long id;
-//    변수명이 컬럼명으로 그대로 생성. 캐멀케이스(camelCase)인 경우 DB에는 언더스코어로 변경 ex) nickName -> nick_name
+//    변수명이 컬럼명으로 그대로 생성. 캐멀케이스(camelCase)인 경우 DB에는 언더스코어로 변경되어 저장 ex) nickName -> nick_name
     private String name;
 //    길이(varchar50, 디폴트-varchar255), 제약조건(unique, not null) 설정
     @Column(length = 50, unique = true, nullable = false)
@@ -45,8 +45,8 @@ public class Author extends BaseTimeEntity {
 //    일반적으로 OneToMany는 선택사항, ManyToOne은 필수사항
 //    mappedBy : ManyToOne쪽의 변수명을 문자열로 지정. -> 조회해야할 컬럼을 명시
 //    연관관계(fk)의 주인설정 -> 연관관계의 주인은 author 변수를 가지고 있는 Post에 있음을 명시 //author에 fk를 검
-//    cascade옵션 : 1)REMOVE : 자료삭제시 부모도 함께 삭제? 2)PERSIST : 자료를 새로 생성시 author안에서 post를 만들어서 추가할경우, post도 생성됨 3)ALL(REMOVE,PRESIST 모두 포함)
-//    orphanRemoval : 자식의 자식까지 연쇄적으로 삭제해야할 경우 모든 부모에 orphanRemoval = true 옵션 추가
+//    cascade옵션 : 1)REMOVE : 부모 자료삭제시 자식도 함께 삭제 2)PERSIST : 자료를 새로 생성시 author안에서 post를 만들어서 추가할경우, post도 생성됨 3)ALL(REMOVE,PERSIST 모두 포함)
+//    orphanRemoval : 자식의 자식까지 연쇄적으로 삭제해야할 경우 모든 부모에 orphanRemoval = true 옵션 추가 // 연관관계를 끊으면 자식은 삭제됨 (A에서 B를 삭제하면 B의 자식인 C도 삭제됨)
     @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     // OneToMany 는 Lazy가 디폴트값 / ManyToOne 은 EAGER 가 디폴트
     @Builder.Default    //persist옵션쓸때는 new ArrayList<>()로 초기화 꼭 해야함

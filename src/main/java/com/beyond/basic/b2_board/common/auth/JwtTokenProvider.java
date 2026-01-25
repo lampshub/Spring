@@ -19,7 +19,7 @@ import java.util.Date;
 public class JwtTokenProvider {
 
 //    중요정보의 경우 application.yml에 저장. Value를 통해 주입
-    @Value("${jwt.secretKey}") //yml에 있는코드를 가져옴
+    @Value("${jwt.secretKey}") //yml에 있는 코드를 가져옴
     private String st_secret_key;
 
 //    인코딩된 문자열 -> 디코딩된 문자열 -> HS512알고리즘으로 암호화

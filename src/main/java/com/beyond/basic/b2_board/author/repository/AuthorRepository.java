@@ -18,7 +18,7 @@ public interface AuthorRepository extends JpaRepository<Author, Long> { // <엔�
 //    그외에 다른컬럼으로 조회할때에는 findBy+컬럼명 형식으로 선언하면 (런타임)실행시점 자동구현.
     Optional<Author> findByEmail(String email);
     List<Author> findAllByName(String name);
-//    List<Author> findAllByNameANdAge(String name, int age); //이렇게도 가능 And/Or
+//    List<Author> findAllByNameAndAge(String name, int age); //이렇게도 가능 And/Or
 
 }
 
