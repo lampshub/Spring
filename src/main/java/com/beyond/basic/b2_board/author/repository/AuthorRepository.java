@@ -21,5 +21,3 @@ public interface AuthorRepository extends JpaRepository<Author, Long> { // <엔�
 //    List<Author> findAllByNameAndAge(String name, int age); //이렇게도 가능 And/Or
 
 }
-
-

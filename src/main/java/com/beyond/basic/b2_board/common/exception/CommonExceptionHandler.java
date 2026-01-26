@@ -3,6 +3,7 @@ package com.beyond.basic.b2_board.common.exception;
 import com.beyond.basic.b2_board.common.dtos.CommonErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,7 +13,7 @@ import java.util.NoSuchElementException;
 
 //Controller 어노테이션이 붙어있는 모든 클래스의 예외를 아래 클래스에서 인터셉팅(가로채기).
 @RestControllerAdvice   //예외를 캐치하는 Controller
-public class CommonExceptionHandler {       //Controller 에서 에러가 이거 사용이 안됌??
+public class CommonExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> illegal(IllegalArgumentException e) {
         e.printStackTrace();
@@ -43,6 +44,18 @@ public class CommonExceptionHandler {       //Controller 에서 에러가 이거
                 build();
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(dto);
     }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<?> authorizedException(AuthorizationDeniedException e) {
+        e.printStackTrace();
+        CommonErrorDto dto = CommonErrorDto.builder()
+                .status_code(403)
+                .error_message(e.getMessage()).
+                build();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(dto);
+    }
+
+
 
 //    위의 에러들을 제외한 나머지 에러 처리(전역 예외처리의 기본형)
     @ExceptionHandler(Exception.class)

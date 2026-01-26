@@ -22,6 +22,9 @@ public class JwtTokenProvider {
     @Value("${jwt.secretKey}") //yml에 있는 코드를 가져옴
     private String st_secret_key;
 
+    @Value("${jwt.expiration}") //yml에 있는 코드를 가져옴
+    private int expiration;
+
 //    인코딩된 문자열 -> 디코딩된 문자열 -> HS512알고리즘으로 암호화
 //    st_secret_key를 디코딩 + 암호화
     private Key secret_key ;
@@ -48,7 +51,7 @@ public class JwtTokenProvider {
 //                아래 3가지 요소는 페이로드
                 .setClaims(claims)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime()+30*60*1000L)) //30분*60초*1000밀리초 : 30분을 밀리초형태로 변환
+                .setExpiration(new Date(now.getTime()+expiration*60*1000L)) //30분*60초*1000밀리초 : 30분을 밀리초형태로 변환 => 실무에선 yml에서 코드 관리(30->expiration)
 //                아래 메서드는 secret키를 통해 서명값(signature) 생성
                 .signWith(secret_key)
                 .compact();    //compact 는 return을 string으로 만들어줌

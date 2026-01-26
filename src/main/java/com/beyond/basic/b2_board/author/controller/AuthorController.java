@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/author")
 public class AuthorController {
-    //      생성자주입방식으로 생성자AutoController에 authorService 주입
+//      생성자주입방식으로 생성자AutoController에 authorService 주입
     private final AuthorService authorService;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -31,7 +32,7 @@ public class AuthorController {
 //        this.authorService = new AuthorService();
 //    }
 
-    //    컨트롤러에서 서비스로 dto 전달
+//    컨트롤러에서 서비스로 dto 전달
     @PostMapping("/create")
 //    dto에 있는 validation어노테이션(@NotBlank)과 @Valid가 한쌍
     public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto) {     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
@@ -48,8 +49,11 @@ public class AuthorController {
         return ResponseEntity.status(HttpStatus.CREATED).body("ok");
     }
 
-    //    수업영상 260116 오후 3:11:45
+//    수업영상 260116 오후 3:11:45
     @GetMapping("/list")
+//    PreAuthorize : Authentication객체 안의 권한정보를 확인하는 어노테이션
+//    2개 이상의 Role을 허용하는 경우 : "hasRole('ADMIN')  or hasRole('SELLER')"
+    @PreAuthorize("hasRole('ADMIN')") // 이 권한이 있어야 한다 -> ROLE_ 에서 찾음    ==> Filter계층인 필터체인-인증/인가관련 예외처리에서 에러를 잡음 SecurityConfig
     public List<AuthorListDto> findAll() {
         List<AuthorListDto> dtoList = authorService.findAll();
         return dtoList;
@@ -101,18 +105,18 @@ public class AuthorController {
         authorService.updatePw(dto);
     }
 
-//    @PostMapping("/login")
-//    public String login(@RequestBody AuthorLoginDto dto){
-//        Author author = authorService.login(dto);
-////        토큰생성 및 리턴
-//        String token = jwtTokenProvider.createToken(author);
-//        return token;
-//    }
-
     @PostMapping("/login")
     public String login(@RequestBody AuthorLoginDto dto){
-        authorService.login(dto);   //author 에 담을필요없으므로 객체생성X -> 토큰생성시 필요시 객체생성해서 사용
-//        String token
-    return "token";
+        Author author = authorService.login(dto);
+//        토큰생성 및 리턴
+        String token = jwtTokenProvider.createToken(author);
+        return token;
     }
+
+//    @PostMapping("/login")
+//    public String login(@RequestBody AuthorLoginDto dto){
+//        authorService.login(dto);   //author 에 담을필요없으므로 객체생성X -> 토큰생성시 필요시 객체생성해서 사용
+////        String token
+//    return "token";
+
 }

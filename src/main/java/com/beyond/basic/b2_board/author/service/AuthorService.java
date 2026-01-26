@@ -71,7 +71,7 @@ public class AuthorService {
 //                .password(dto.getPassword())
 //                .build();
 
-//        방법2. toEntity, FromEntity 패턴을 통한 객체 조립
+//        방법2. toEntity, fromEntity 패턴을 통한 객체 조립
 //        객체조립이라는 반복적인 작업을 별도의 코드로 떼어내 공통화
 //        email 중복여부 검증     // findByEmail() 리턴타입은 Optional. 있으면 Author, 없으면 empty
         if(authorRepository.findByEmail(dto.getEmail()).isPresent()){
@@ -82,8 +82,9 @@ public class AuthorService {
 
 //        Author author = dto.toEntity();
         Author author = dto.toEntity(passwordEncoder.encode(dto.getPassword()));     //여기서 author를 만들때 암호화된 값으로 바꿈
-        Author authorDb = authorRepository.save(author);    //id 값이 여기 save()로 DB에 저장된 후에 생김
-//        cascade persist 를 활용한 예시      // .author(authorDb) 여기서 authorDB의 PK(id)값만 FK로 저장됨 ** 이거 확인해보기
+        Author authorDb = authorRepository.save(author);    //id값이 여기 save()로 DB에 저장된 후에 생김
+//        cascade persist 를 활용한 예시
+//        .author(authorDb) 여기서 authorDB의 PK(id)값만 FK로 저장됨 ** 이거 확인해보기
         author.getPostList().add(Post.builder().title("안녕하세요").author(authorDb).build());
 
 ////        아래순서로 바꿔도 가능함
