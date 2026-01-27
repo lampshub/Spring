@@ -52,8 +52,8 @@ public class Author extends BaseTimeEntity {
     @Builder.Default    //persist옵션쓸때는 new ArrayList<>()로 초기화 꼭 해야함
     private List<Post> postList = new ArrayList<>();
 
-    @OneToOne(mappedBy="author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Address address;
+//    @OneToOne(mappedBy="author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    private Address address;
 
 
 

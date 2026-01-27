@@ -9,6 +9,7 @@ import com.beyond.basic.b2_board.post.domain.Post;
 import com.beyond.basic.b2_board.post.repository.PostRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -157,11 +158,21 @@ public class AuthorService {
             }
         }
 
+
         if(!check){
             throw new IllegalArgumentException("email 또는 비밀번호가 일치하지 않습니다.");
         }
         return opt_author.get();    //.get() 은 Optional에서 값을 꺼냄. 없으면 예외발생. 여기선 이미 예외처리를 다 해서 값이 있음.
     }
+
+    public AuthorDetailDto myinfo() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString(); //filter에서 가져온 토큰에서 받아온 email
+        Optional<Author> opt_author = authorRepository.findByEmail(email);
+        Author author = opt_author.orElseThrow(() -> new NoSuchElementException("없는 entity"));
+        AuthorDetailDto dto = AuthorDetailDto.fromEntity(author);
+        return dto;
+    }
+
 
     public void updatePw(AuthorUpdatePwDto dto){
         Author author = authorRepository.findByEmail(dto.getEmail()).orElseThrow(()-> new EntityNotFoundException("해당 ID가 없습니다"));
@@ -172,5 +183,7 @@ public class AuthorService {
 //        영속성컨텍스트 : 애플리케이션과 DB사이에서 객체를 보관하는 가상의 DB 역할
 //        장점 1) 쓰기지연 : insert, update 등의 작업사항을 즉시 실행하지 않고, 커밋시점에 모아서 실행(성능향상)
 //            2) 변경감지(dirty checking) : 영속상태(managed)의 엔티티는 트랜잭션 커밋시점에 변경감지를 통해 별도의 save없이 DB에 반영
+
+
     }
 }

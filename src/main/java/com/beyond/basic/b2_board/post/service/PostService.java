@@ -46,7 +46,8 @@ public class PostService {
     }
 
     public List<PostListDto> findAll(){
-        List<Post> postList = postRepository.findAllByDelYn("N");
+//        List<Post> postList = postRepository.findAllByDelYn("N"); //jpa 가 만들어놓은
+        List<Post> postList = postRepository.fetchInnerJoin();    //jpql을 활용한 직접 만든 쿼리 innerjoin 활용
         List<PostListDto> postListDtoList = new ArrayList<>();
         for(Post p : postList  ){
               PostListDto dto = PostListDto.fromEntity(p);

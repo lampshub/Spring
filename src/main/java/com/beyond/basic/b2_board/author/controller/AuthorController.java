@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -119,4 +120,10 @@ public class AuthorController {
 ////        String token
 //    return "token";
 
+@GetMapping("/myinfo")
+public ResponseEntity<?> myinfo(@AuthenticationPrincipal String principal) {
+    System.out.println(principal);
+    AuthorDetailDto dto = authorService.myinfo();
+    return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
 }
