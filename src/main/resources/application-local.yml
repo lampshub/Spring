@@ -3,9 +3,13 @@
 server:
   port: 8081
 
+
+spring:
+  config:
+    activate:
+      on-profile: local
 # 아래는 jdbc의 기본 db 연결 설정. jdbc 뿐만 아니라 mybatis. jpa 등 spring의 대부분의 db 관리기술에서 사용
 # 스키마는 사전생성필요, 테이블의 경우 jdbc/mybatis는 사전생성필요
-spring:
   datasource:
       driver-class-name: org.mariadb.jdbc.Driver
       url: jdbc:mariadb://localhost:3306/board  # board 는 스키마명
@@ -37,3 +41,7 @@ jwt:
   #  인코딩된 문자 32자 이상 필요.(특수문자) : base64 encoder 웹사이트 활용
   #  beyondaccesstokensecretkeybeyondaccesstokensecretkeybeyondaccesstokensecretkey
   secretKey: YmV5b25kYWNjZXNzdG9rZW5zZWNyZXRrZXliZXlvbmRhY2Nlc3N0b2tlbnNlY3JldGtleWJleW9uZGFjY2Vzc3Rva2Vuc2VjcmV0a2V5
+
+logging:
+  level:
+    root: debug

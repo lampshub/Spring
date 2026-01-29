@@ -13,7 +13,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import org.springframework.beans.factory.annotation.Value;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,12 +51,18 @@ public class AuthorService {
     private final AuthorRepository authorRepository;
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Client s3Client;
+    @Value("${aws.s3.bucket1}")
+    private String bucket;
+
 //    생성자가 하나밖에 없을때에는 AutoWired생략가능
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, PostRepository postRepository, PasswordEncoder passwordEncoder){
+    public AuthorService(AuthorRepository authorRepository, PostRepository postRepository, PasswordEncoder passwordEncoder, S3Client s3Client){
         this.authorRepository=authorRepository;
         this.postRepository = postRepository;
         this.passwordEncoder = passwordEncoder;
+        this.s3Client = s3Client;
+
     }
 
 ////    의존성주입방법3. RequiredArgsConstructor어노테이션 사용
@@ -60,7 +71,7 @@ public class AuthorService {
 //      private final AuthorRepository authorRepository;
 
 
-    public void save(AuthorCreateDto dto){
+    public void save(AuthorCreateDto dto, MultipartFile profileImage){
 ////        방법1. 객체 직접 조립
 ////        1-1) 생성자만을 활용한 객체 조립
 //        Author author = new Author(null, dto.getName(), dto.getEmail(), dto.getPassword());
@@ -86,11 +97,33 @@ public class AuthorService {
         Author authorDb = authorRepository.save(author);    //id값이 여기 save()로 DB에 저장된 후에 생김
 //        cascade persist 를 활용한 예시
 //        .author(authorDb) 여기서 authorDB의 PK(id)값만 FK로 저장됨 ** 이거 확인해보기
-        author.getPostList().add(Post.builder().title("안녕하세요").author(authorDb).build());
+//        author.getPostList().add(Post.builder().title("안녕하세요").author(authorDb).build());
 
 ////        아래순서로 바꿔도 가능함
 //        author.getPostList().add(Post.builder().title("안녕하세요").author(author).build());
 //        authorRepository.save(author);    //여기서 id값 생성됨
+
+//        파일을 업로드를 위한 저장 객체 구성
+        if(profileImage !=null) {
+            String fileName = "user-" + author.getId() + "-profileimage-" + profileImage.getOriginalFilename(); //아직 id값이 없지만
+            PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(fileName)  //파일명 지정(중복이 안나오게)
+                    .contentType(profileImage.getContentType())     //image/jpeg, video/mp4, ...
+                    .build();
+
+//        aws에 이미지 업로드(byte형태로 변환해서 업로드)
+            try {
+                s3Client.putObject(request, RequestBody.fromBytes(profileImage.getBytes()));    //어디에 저장할지(버킷정보/저장객체), 실제정보
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+//        aws의 이미지 url 추출
+            String imgUrl = s3Client.utilities().getUrl(a->a.bucket(bucket).key(fileName)).toExternalForm();
+
+            author.updateProfileImageUrl("imgUrl");
+        }
 
 ////        cascade 옵션이 아닌 예시 (cascade없이도 저장 가능)
 //        postRepository.save(Post.builder().title("안녕하세요").author(authorDb).build());    //회원가입하면 안녕하세요 post까지 작성.

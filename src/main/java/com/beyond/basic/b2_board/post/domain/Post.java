@@ -5,6 +5,8 @@ import com.beyond.basic.b2_board.common.domain.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter @ToString
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,8 +35,16 @@ public class Post  extends BaseTimeEntity {
     @Builder.Default
     private String delYn="N";
 
+    @Builder.Default
+    private String appointment="N";
+    @Builder.Default
+    private LocalDateTime appointmentTime = LocalDateTime.now();
 
     public void deletePost(){
         this.delYn = "Y";
+    }
+
+    public void updateAppointment(String appointment){
+        this.appointment = appointment;
     }
 }

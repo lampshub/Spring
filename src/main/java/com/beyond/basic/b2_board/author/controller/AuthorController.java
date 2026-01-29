@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -36,7 +37,9 @@ public class AuthorController {
 //    컨트롤러에서 서비스로 dto 전달
     @PostMapping("/create")
 //    dto에 있는 validation어노테이션(@NotBlank)과 @Valid가 한쌍
-    public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto) {     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
+//    public ResponseEntity<?> create(@RequestBody @Valid AuthorCreateDto dto) {     //AuthorCreateDto에서 레파지토리로 갈때, Author(엔티티)로 바꿔서 줘야 db에 저장할수있음
+    public ResponseEntity<?> create(@RequestPart("author") @Valid AuthorCreateDto dto, @RequestPart("profileImage") MultipartFile profileImage) {
+
 ////        아래 예외처리는 ExceptionHandler에서 전역적으로 예외처리
 //        try {
 //            authorService.save(dto);
@@ -46,7 +49,8 @@ public class AuthorController {
 //            CommonErrorDto commonErrorDto = CommonErrorDto.builder().status_code(400).error_message(e.getMessage()).build();
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commonErrorDto);
 //        }
-        authorService.save(dto);
+
+        authorService.save(dto, profileImage);
         return ResponseEntity.status(HttpStatus.CREATED).body("ok");
     }
 

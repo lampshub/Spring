@@ -55,6 +55,11 @@ public class Author extends BaseTimeEntity {
 //    @OneToOne(mappedBy="author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    private Address address;
 
+    private String profileImageUrl;
+
+    public void updateProfileImageUrl(String profileImageUrl){
+        this.profileImageUrl = profileImageUrl;
+    }
 
 
     public void updatePassword(String newPassword){

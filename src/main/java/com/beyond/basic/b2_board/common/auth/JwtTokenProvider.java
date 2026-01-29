@@ -29,7 +29,7 @@ public class JwtTokenProvider {
 //    st_secret_key를 디코딩 + 암호화
     private Key secret_key ;
 
-//    생성자 호출 이후에 아래 메서드를 실행하게 함으로서. @Value보다 늦게(생성자 만들어지고 나서) 실행하게되어 각 주입의 문제해결
+//    생성자 호출 이후에 아래 메서드를 실행하게 함으로서 @Value보다 늦게(생성자 만들어지고 나서) 실행하게되어 각 주입의 문제해결
     @PostConstruct
     public void init(){
         secret_key = new SecretKeySpec(Base64.getDecoder().decode(st_secret_key), SignatureAlgorithm.HS512.getJcaName());

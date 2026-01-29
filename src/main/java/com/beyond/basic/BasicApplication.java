@@ -2,14 +2,20 @@ package com.beyond.basic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 //부트스트랩 코드 (실행코드) -> 프로젝트를 켜는 목적만 있음
 //ComponentScan에 의해 Application파일 하위 경로의 요소들이 싱글톤객체로 스캔
 @SpringBootApplication
+//스케줄러 사용시 필요한 어노테이션
+@EnableScheduling
+//주로 web서블릿기반 구성요소(@WebServlet)을 스캔, 자동으로 빈으로 등록)
+@ServletComponentScan
 public class BasicApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BasicApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+	    SpringApplication.run(BasicApplication.class, args);
+    }
 }
