@@ -52,6 +52,7 @@ public class AuthorService {
     private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3Client s3Client;
+//    yml파일에서 bucket1 정보 연결
     @Value("${aws.s3.bucket1}")
     private String bucket;
 
@@ -103,8 +104,8 @@ public class AuthorService {
 //        author.getPostList().add(Post.builder().title("안녕하세요").author(author).build());
 //        authorRepository.save(author);    //여기서 id값 생성됨
 
-//        파일을 업로드를 위한 저장 객체 구성
-        if(profileImage !=null) {
+//        파일을 업로드를 위한 저장 객체 구성 (aws s3버킷에 파일 업로드를 할 요청정보를 담는 객체)
+        if(profileImage != null) {
             String fileName = "user-" + author.getId() + "-profileimage-" + profileImage.getOriginalFilename(); //아직 id값이 없지만
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(bucket)
@@ -186,7 +187,7 @@ public class AuthorService {
         if (!opt_author.isPresent()) {
             check = false;
         } else {
-            if (!passwordEncoder.matches(dto.getPassword(), opt_author.get().getPassword())) {
+            if (!passwordEncoder.matches(dto.getPassword(), opt_author.get().getPassword())) {  //사용자의 이메일과 입력된 이메일 비교
                 check = false;
             }
         }
