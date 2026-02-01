@@ -8,7 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-//CommandLineRunner를 구현함으로서 아래 run메서드가 스프링빈으로 등록되는 시점에 자동실행
+//CommandLineRunner를 구현함으로서 아래 run메서드가 스프링빈으로 등록되는 시점에 자동실행    //서버 키자마자 admin 계정 생성됨
 @Component
 @Transactional
 public class InitialDataLoad implements CommandLineRunner {

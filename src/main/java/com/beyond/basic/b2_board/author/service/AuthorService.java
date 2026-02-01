@@ -192,7 +192,6 @@ public class AuthorService {
             }
         }
 
-
         if(!check){
             throw new IllegalArgumentException("email 또는 비밀번호가 일치하지 않습니다.");
         }
